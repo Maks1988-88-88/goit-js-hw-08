@@ -30,13 +30,15 @@ const imagesListTemplate = ({ preview, original, description }) => {
 
 const addImg = galleryImages.map(imagesListTemplate).join("");
 
-
 refs.galleryContainer.insertAdjacentHTML("afterbegin", addImg);
 
 const galleryClick = (event) => {
   event.preventDefault();
 
   const currentImg = event.target.dataset.source;
+  const currentAlt = event.target.alt;
+  // console.log(currentImg);
+  // console.log(currentAlt);
 
   const findImgNavPosotion = () => {
     counter = 0;
@@ -50,18 +52,15 @@ const galleryClick = (event) => {
   };
   findImgNavPosotion();
 
-
-
   if (event.target.nodeName === "IMG") {
     refs.lightboxContainer.classList.add("is-open");
     refs.imgLightbox.setAttribute("src", `${currentImg}`);
+    refs.imgLightbox.setAttribute("alt", `${currentAlt}`);
   }
 };
 refs.galleryContainer.addEventListener("click", galleryClick);
 
 const closeLightBox = (event) => {
-
-
   if (
     event.target.nodeName === "BUTTON" &&
     event.target.dataset.action === "close-lightbox"
@@ -79,6 +78,7 @@ refs.boxOverlay.addEventListener("click", closeLightBox);
 const closeContainer = () => {
   refs.lightboxContainer.classList.remove("is-open");
   refs.imgLightbox.setAttribute("src", "");
+  refs.imgLightbox.setAttribute("alt", "");
 };
 
 const pressKeyLightBox = (event) => {
@@ -92,10 +92,7 @@ const pressKeyLightBox = (event) => {
         counter = 0;
       }
 
-      refs.imgLightbox.setAttribute(
-        "src",
-        `${galleryImages[counter].original}`
-      );
+      currentGalleryImages();
     }
 
     if (event.code === "ArrowLeft") {
@@ -103,13 +100,14 @@ const pressKeyLightBox = (event) => {
       if (counter === -1) {
         counter = 8;
       }
-
-      refs.imgLightbox.setAttribute(
-        "src",
-        `${galleryImages[counter].original}`
-      );
+      currentGalleryImages();
     }
   }
+};
+
+const currentGalleryImages = () => {
+  refs.imgLightbox.setAttribute("src", `${galleryImages[counter].original}`);
+  refs.imgLightbox.setAttribute("alt", `${galleryImages[counter].description}`);
 };
 
 const pressKey = window.addEventListener("keyup", pressKeyLightBox);
